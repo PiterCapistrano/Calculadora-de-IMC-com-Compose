@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -30,8 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.pitercapistrano.calculadoradeimc_compose.calculo.CalcularImc
+import com.pitercapistrano.calculadoradeimc_compose.ui.theme.Black
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.Blue
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.CalculadoraDeIMC_ComposeTheme
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.DarkBlue
@@ -77,12 +80,29 @@ fun CalculadoraImc(){
         mutableStateOf("")
     }
 
+    var corResultado by remember { mutableStateOf(Black) } // Cor padrão
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = "Calculadora de IMC", color = White) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Blue)
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Blue),
+                actions = {
+                    IconButton(
+                        onClick = {
+                            peso = ""
+                            altura = ""
+                            resultado = ""
+                            corResultado = Black
+                    }
+                    ) {
+                        Image(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_refresh),
+                            contentDescription = "Ícone de resetar todos os campos"
+                        )
+                    }
+                }
+            )
         }
     ) {
         Column(
@@ -159,6 +179,7 @@ fun CalculadoraImc(){
                     }else{
                         calcularImc.calcularImc(peso, altura)
                         resultado = calcularImc.resultadoImc()
+                        corResultado = calcularImc.corResultado()
                     }
                 },
                 modifier = Modifier
@@ -182,7 +203,7 @@ fun CalculadoraImc(){
                 text = resultado,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = DarkBlue,
+                color = corResultado // Aplica a cor correspondente ao resultado
             )
         }
     }

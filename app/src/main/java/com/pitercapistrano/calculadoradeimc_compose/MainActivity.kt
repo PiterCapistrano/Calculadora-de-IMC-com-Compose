@@ -1,6 +1,7 @@
 package com.pitercapistrano.calculadoradeimc_compose
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.gestures.scrollable
@@ -30,12 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pitercapistrano.calculadoradeimc_compose.calculo.CalcularImc
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.Blue
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.CalculadoraDeIMC_ComposeTheme
 import com.pitercapistrano.calculadoradeimc_compose.ui.theme.DarkBlue
@@ -56,6 +59,10 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculadoraImc(){
+
+    val context = LocalContext.current
+
+    val calcularImc = CalcularImc()
 
     var peso by remember {
         mutableStateOf("")
@@ -147,7 +154,12 @@ fun CalculadoraImc(){
             )
             Button(
                 onClick = {
-
+                    if (peso.isEmpty() || altura.isEmpty()){
+                        Toast.makeText(context, "Preencha todos os campos!", Toast.LENGTH_SHORT).show()
+                    }else{
+                        calcularImc.calcularImc(peso, altura)
+                        resultado = calcularImc.resultadoImc()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
